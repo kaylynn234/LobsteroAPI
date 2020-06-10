@@ -23,11 +23,24 @@ for path in config["directories"]["directory_paths"]:
 static_file_mapping = dict(static_file_mapping)
 
 
-@app.get("/random/{name}")
-async def return_random(name: str):
+@app.get("/random/{group_name}")
+async def return_random(group_name: str):
     """Returns the URL to a random file in the specified group."""
-    result = static_file_mapping.get(name.lower(), None)
+    result = static_file_mapping.get(group_name.lower(), None)
     if result is None:
-        raise HTTPException(status_code=404, detail=f"No group named {name} found")
+        raise HTTPException(status_code=404, detail=f"No group named {group_name} found")
     else:
         return {"item": random.choice(result)}
+
+
+@app.get("/specific/{group_name}/{number}")
+async def return_specific(group_name: str, number=int):
+    """Returns the URL to a specific file in the specified group."""
+    result = static_file_mapping.get(group_name.lower(), None)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"No group named {group_name} found")
+
+    if number > len(result):
+        raise HTTPException(status_code=404, detail=f"No image at position {number}!")
+
+    return {"item": result[number - 1]}
