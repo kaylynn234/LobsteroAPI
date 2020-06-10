@@ -34,7 +34,7 @@ async def return_random(group_name: str):
 
 
 @app.get("/specific/{group_name}/{number}")
-async def return_specific(group_name: str, number=int):
+async def return_specific(group_name: str, number: int):
     """Returns the URL to a specific file in the specified group."""
     result = static_file_mapping.get(group_name.lower(), None)
     if result is None:
