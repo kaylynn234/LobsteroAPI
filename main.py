@@ -25,17 +25,18 @@ static_file_mapping = dict(static_file_mapping)
 
 @app.get("/random/{group_name}")
 async def return_random(group_name: str):
-    """Returns the URL to a random file in the specified group."""
+    """Returns the URL and index to a random file in the specified group."""
     result = static_file_mapping.get(group_name.lower(), None)
     if result is None:
         raise HTTPException(status_code=404, detail=f"No group named {group_name} found")
     else:
-        return {"item": random.choice(result)}
+        chosen = random.choice(result)
+        return {"item": chosen, "index": result.index(chosen) + 1}
 
 
 @app.get("/specific/{group_name}/{number}")
 async def return_specific(group_name: str, number: int):
-    """Returns the URL to a specific file in the specified group."""
+    """Returns the URL and index to a specific file in the specified group."""
     result = static_file_mapping.get(group_name.lower(), None)
     if result is None:
         raise HTTPException(status_code=404, detail=f"No group named {group_name} found")
@@ -43,4 +44,5 @@ async def return_specific(group_name: str, number: int):
     if number > len(result):
         raise HTTPException(status_code=404, detail=f"No image at position {number}!")
 
-    return {"item": result[number - 1]}
+    chosen = result[number - 1]
+    return {"item": chosen, "index": result.index(chosen) + 1}
